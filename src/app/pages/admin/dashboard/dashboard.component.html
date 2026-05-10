@@ -1,0 +1,162 @@
+<div class="admin-dashboard animate-fade">
+
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-info">
+      <h1>Administration Console</h1>
+      <p>Operational overview of the BookVault ecosystem</p>
+    </div>
+
+    <button class="btn-refresh" (click)="syncData()" [disabled]="isSyncing">
+      <i class="bi bi-arrow-clockwise" [class.spin]="isSyncing"></i>
+      <span>{{ isSyncing ? 'Synchronizing...' : 'Synchronize Data' }}</span>
+    </button>
+  </header>
+
+
+  <!-- Statistics -->
+  <section class="stats-grid">
+
+    <div class="metric-card">
+      <div class="metric-title">Registered Users</div>
+      <div class="metric-value">
+        {{ stats?.totalUsers || 0 }}
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-title">Published Books</div>
+      <div class="metric-value">
+        {{ stats?.publishedBooks || 0 }}
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-title">Completed Orders</div>
+      <div class="metric-value">
+        {{ stats?.totalOrders || 0 }}
+      </div>
+    </div>
+
+    <div class="metric-card warning">
+      <div class="metric-title">Pending Approvals</div>
+      <div class="metric-value">
+        {{ stats?.pendingOrders || 0 }}
+      </div>
+    </div>
+
+  </section>
+
+
+  <div class="dashboard-layout">
+
+    <!-- Activity -->
+    <section class="content-panel">
+
+      <div class="panel-header">
+        <h3>Recent Activity</h3>
+      </div>
+
+      @for(activity of activities; track activity.id){
+
+      <div class="activity-row">
+
+        <div class="activity-icon">
+          <i class="bi" [ngClass]="getActivityIcon(activity.action)">
+          </i>
+        </div>
+
+        <div class="activity-info">
+
+          <div class="activity-text">
+            <strong>{{ activity.userName }}</strong>
+            {{ formatAction(activity.action) }}
+            <div class="activity-detail-summary" [innerHTML]="activity.detail"></div>
+          </div>
+
+          <div class="activity-time">
+            {{ activity.timestamp | date:'medium' }}
+          </div>
+
+        </div>
+
+      </div>
+
+      }
+
+    </section>
+
+
+    <!-- Quick Actions -->
+    <aside class="content-panel">
+      <div class="mb-4">
+        <button class="action-button w-100 mb-3" (click)="onAddBook()">
+          <i class="bi bi-plus-circle"></i>
+          Register New Title
+        </button>
+      </div>
+
+      <!-- Quick Broadcast -->
+      <div class="panel-header border-top pt-4">
+        <h3>Broadcast Message</h3>
+      </div>
+      <div class="broadcast-box mb-4">
+        <textarea 
+          [(ngModel)]="newNotificationMessage" 
+          placeholder="Enter announcement text for all users..."
+          class="broadcast-input"
+          rows="3"></textarea>
+        <button 
+          class="btn-broadcast w-100 mt-2" 
+          (click)="broadcastNotification()"
+          [disabled]="!newNotificationMessage.trim() || isBroadcasting">
+          <i class="bi bi-megaphone" *ngIf="!isBroadcasting"></i>
+          <span class="spinner-border spinner-border-sm" *ngIf="isBroadcasting"></span>
+          {{ isBroadcasting ? 'Broadcasting...' : 'Send to All Users' }}
+        </button>
+      </div>
+
+      <!-- Notifications List -->
+      <div class="panel-header border-top pt-3">
+        <h3>Recent Notifications</h3>
+      </div>
+
+      <div class="notification-list-admin">
+        @for(note of notifications; track note.id){
+          <div class="admin-note-item">
+            <div class="note-main">
+              <span class="status-dot"></span>
+              <div class="note-info-box">
+                <p class="note-msg-text">{{ note.message }}</p>
+                <span class="note-timestamp">{{ note.createdAt | date:'short' }}</span>
+              </div>
+            </div>
+            <button class="btn-delete-note" (click)="onDeleteNotification(note.id!)" title="Remove Notification">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+        } @empty {
+          <div class="text-muted text-center py-4 small italic">
+            <i class="bi bi-info-circle me-1"></i>
+            No active announcements
+          </div>
+        }
+      </div>
+
+      <div class="mt-4 border-top pt-3">
+        <button class="action-button w-100 mb-2" (click)="onRunAudit()">
+          <i class="bi bi-shield-check"></i>
+          Run Security Audit
+        </button>
+
+        <button class="action-button critical w-100" (click)="onRestartServices()">
+          <i class="bi bi-power"></i>
+          Restart Services
+        </button>
+      </div>
+
+    </aside>
+
+  </div>
+
+</div>

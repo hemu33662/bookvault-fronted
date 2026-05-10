@@ -1,0 +1,83 @@
+<div class="admin-container">
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" [class.show]="isSidebarOpen" (click)="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.open]="isSidebarOpen">
+    <div class="sidebar-header">
+      <div class="admin-brand">
+        <i class="bi bi-shield-lock-fill"></i>
+        <span>BookVault Admin</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main Console</div>
+      <a routerLink="/admin/dashboard" routerLinkActive="active" class="admin-nav-item">
+        <i class="bi bi-grid-fill"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/books" routerLinkActive="active" class="admin-nav-item">
+        <i class="bi bi-journal-text"></i>
+        <span>Book Management</span>
+      </a>
+      <a routerLink="/admin/users" routerLinkActive="active" class="admin-nav-item">
+        <i class="bi bi-people-fill"></i>
+        <span>User Control</span>
+      </a>
+      <a routerLink="/admin/orders" routerLinkActive="active" class="admin-nav-item">
+        <i class="bi bi-receipt"></i>
+        <span>Orders & Billing</span>
+      </a>
+      <a routerLink="/admin/security" routerLinkActive="active" class="admin-nav-item">
+        <i class="bi bi-safe-fill"></i>
+        <span>Security Audit</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a routerLink="/" class="admin-nav-item site-link">
+        <i class="bi bi-globe2"></i>
+        <span>View Public Site</span>
+      </a>
+      <a routerLink="/app/dashboard" class="admin-nav-item site-link">
+        <i class="bi bi-person-circle"></i>
+        <span>User Dashboard</span>
+      </a>
+      <button class="admin-logout-btn" (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Exit Console</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Content Area -->
+  <div class="admin-main">
+    <header class="admin-header">
+      <div class="header-left">
+        <button class="admin-toggle" (click)="toggleSidebar()">
+          <i class="bi bi-list"></i>
+        </button>
+        <div class="admin-breadcrumb">
+          <span class="muted">System</span>
+          <i class="bi bi-chevron-right mx-2"></i>
+          <span class="active">Management</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="admin-profile-pill">
+          <div class="admin-avatar">{{ ((user$ | async)?.displayName || 'A')[0] }}</div>
+          <div class="admin-info">
+            <span class="name">{{ (user$ | async)?.displayName || 'Admin' }}</span>
+            <span class="role">Platform Administrator</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-body">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

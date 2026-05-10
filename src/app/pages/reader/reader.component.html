@@ -1,0 +1,146 @@
+<div class="reader-container">
+  <header class="reader-header">
+    <div class="header-left">
+      <div class="book-title">
+        <i class="bi bi-journal-bookmark-fill me-3"></i>
+        {{ book?.title || 'Loading Story...' }}
+      </div>
+      <div class="author-subtitle" *ngIf="book?.author">by {{ book.author }}</div>
+    </div>
+
+    <div class="header-right">
+      <button class="header-btn fullscreen-btn" (click)="toggleFullScreen()" title="Full Screen">
+        <i class="bi" [ngClass]="isFullScreen ? 'bi-fullscreen-exit' : 'bi-fullscreen'"></i>
+      </button>
+      <button class="header-btn close-btn" (click)="closeReader()" title="Exit Reader">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="reader-main">
+    <!-- Premium Loading State -->
+    @if (isLoading) {
+      <div class="loading-overlay">
+        <div class="gif-crop-lens">
+          <img src="assets/R.gif" class="loading-gif" alt="Loading...">
+        </div>
+        <h2 class="text-2xl font-serif text-[#d4af37] mb-4">{{ loadingStatus }}</h2>
+        <div class="progress-bar-container">
+          <div class="progress-bar" [style.width.%]="loadingProgress"></div>
+        </div>
+        <p class="text-stone-400 mt-2 italic" *ngIf="loadingProgress < 100">Downloading Archive ({{ loadingProgress }}%)...</p>
+        <p class="text-stone-400 mt-2 italic" *ngIf="loadingProgress === 100">Almost ready...</p>
+      </div>
+    }
+
+    <!-- Premium Flip 2.0 Read Desk -->
+    <div class="read-desk" [class.hidden]="isLoading">
+      <div class="page-viewport shadow-2xl" 
+           [class.flipping-next]="isFlipping && flipDirection === 'next'"
+           [class.flipping-prev]="isFlipping && flipDirection === 'prev'">
+        
+        <!-- Secure Watermark Overlay -->
+        <div class="reader-watermark">
+          Licensed to: {{ (user$ | async)?.displayName || 'Hemanth' }}
+        </div>
+
+        <!-- Main Display Layer -->
+        <div class="page-display-layer">
+          @for (idx of [currentPageIndex, currentPageIndex+1, currentPageIndex-1]; track idx) {
+             <canvas [id]="'page-canvas-' + idx" 
+                     class="book-canvas" 
+                     [class.active]="currentPageIndex === idx"
+                     *ngIf="idx >= 0 && idx < totalPages"></canvas>
+          }
+
+          @if (!renderedPages.has(currentPageIndex)) {
+            <div class="page-skeleton">
+              <div class="spinner-border text-[#d4af37]" role="status"></div>
+            </div>
+          }
+        </div>
+
+        <!-- Flip Animation Layer -->
+        <div class="flipping-layer" *ngIf="isFlipping">
+          <div class="flip-surface"></div>
+          <div class="flip-shadow"></div>
+        </div>
+
+        <!-- Click regions for navigation -->
+        <div class="nav-zone prev" (click)="prevPage()"></div>
+        <div class="nav-zone next" (click)="nextPage()"></div>
+      </div>
+
+      <!-- Permanent Page Counter -->
+      <div class="permanent-counter">
+        <span class="count-main">Page {{ currentPageIndex + 1 }}</span>
+        <span class="count-divider">/</span>
+        <span class="count-total">{{ totalPages }}</span>
+      </div>
+    </div>
+
+    <!-- Floating Draggable Menu -->
+    <div class="floating-menu" 
+         [style.left.px]="menuX" 
+         [style.top.px]="menuY"
+         [class.expanded]="isMenuExpanded"
+         (mousedown)="startDragging($event)">
+      
+      <div class="menu-trigger" (click)="toggleMenu($event)" [class.active]="isMenuExpanded">
+        <i class="bi" [ngClass]="isMenuExpanded ? 'bi-x-lg' : 'bi-magic'"></i>
+      </div>
+
+      <div class="menu-options" *ngIf="isMenuExpanded">
+        <div class="page-mini-indicator">Pg {{ currentPageIndex + 1 }} / {{ totalPages }}</div>
+        
+        <div class="nav-group">
+          <button class="option-btn" (click)="prevPage(); $event.stopPropagation()" [disabled]="currentPageIndex === 0">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button class="option-btn" (click)="nextPage(); $event.stopPropagation()" [disabled]="currentPageIndex === totalPages - 1">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="cache-indicator" *ngIf="isLocalCached">
+          <i class="bi bi-shield-check"></i> Loaded from Local Vault
+        </div>
+        <div class="cache-indicator saving" *ngIf="isSavingToCache">
+          <i class="bi bi-cpu"></i> Securing to Local Vault...
+        </div>
+
+        <button class="option-btn" (click)="openJumpDialog($event)" title="Jump to Page">
+          <i class="bi bi-rocket-takeoff-fill"></i>
+          <span>Jump</span>
+        </button>
+        <button class="option-btn" (click)="pinPage(); toggleMenu($event)" title="Pin Page">
+          <i class="bi bi-pin-angle-fill"></i>
+          <span>Pin</span>
+        </button>
+        <button class="option-btn text-danger" *ngIf="isLocalCached" (click)="clearLocalCache(); toggleMenu($event)" title="Clear Cache">
+          <i class="bi bi-trash3-fill"></i>
+          <span>Clear Cache</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Jump Dialog -->
+    <div class="jump-dialog-overlay" *ngIf="isJumpDialogOpen" (click)="isJumpDialogOpen = false">
+      <div class="jump-dialog" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+          <i class="bi bi-compass-fill me-2"></i> Navigation
+        </div>
+        <p class="text-stone-300 text-sm mb-4 italic">Specify the page you wish to explore:</p>
+        <div class="input-group mb-4">
+          <input type="number" [(ngModel)]="jumpPageNumber" class="jump-input" [max]="totalPages" min="1">
+          <span class="input-group-text bg-transparent border-0 text-[#d4af37]/50">/ {{ totalPages }}</span>
+        </div>
+        <div class="dialog-actions">
+          <button (click)="isJumpDialogOpen = false" class="btn-cancel">Cancel</button>
+          <button (click)="confirmJump()" class="btn-confirm">Jump Now</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

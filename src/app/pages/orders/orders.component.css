@@ -1,0 +1,181 @@
+.orders-page {
+  background: #F8FAFC;
+  min-height: 100vh;
+}
+
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.serif {
+  font-family: 'Playfair Display', serif;
+}
+
+.page-header {
+  padding: 3rem 0;
+  background: white;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  color: #0F172A;
+  margin-bottom: 0.5rem;
+}
+
+.page-header p {
+  color: #64748B;
+  font-size: 1.1rem;
+}
+
+.orders-section {
+  padding: 3rem 0;
+}
+
+.orders-table-wrapper {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #E2E8F0;
+  overflow: hidden;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th {
+  text-align: left;
+  padding: 1rem 1.5rem;
+  background: #F8FAFC;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.orders-table td {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #F1F5F9;
+  font-size: 0.95rem;
+  color: #0F172A;
+}
+
+.book-title {
+  font-weight: 600;
+  color: #1E293B;
+}
+
+.type-badge {
+  background: #F1F5F9;
+  color: #475569;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.amount {
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.status-pill {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.status-success {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.status-warning {
+  background: #FEF9C3;
+  color: #854D0E;
+}
+
+.status-danger {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+.status-pending {
+  background: #F1F5F9;
+  color: #64748B;
+}
+
+.date {
+  color: #94A3B8;
+}
+
+.loading-state, .empty-orders {
+  text-align: center;
+  padding: 5rem 0;
+  color: #94A3B8;
+}
+
+.loading-state i, .empty-orders i {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.empty-orders h3 {
+  color: #0F172A;
+  margin-bottom: 1rem;
+}
+
+.btn-primary {
+  background: #6366F1;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1.5rem;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .orders-table thead {
+    display: none;
+  }
+  
+  .orders-table tr {
+    display: block;
+    padding: 1.5rem;
+    border-bottom: 1px solid #E2E8F0;
+  }
+  
+  .orders-table td {
+    display: block;
+    padding: 0.5rem 0;
+    border: none;
+  }
+  
+  .orders-table td:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+}

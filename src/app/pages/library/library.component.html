@@ -1,0 +1,383 @@
+<div class="library-page">
+  <section class="welcome-section-mini">
+    <div class="section-container">
+      <div class="welcome-flex">
+        <div class="welcome-text-mini">
+          <h1 class="serif">{{ isFavoritesMode ? 'My Favorites' : 'The Library' }}</h1>
+          <p class="subtitle">{{ isFavoritesMode ? 'Your curated collection of must-reads.' : 'Discover your next favorite story.' }}</p>
+        </div>
+        <div class="welcome-stats">
+          <div class="stat-item">
+            <span class="stat-value">{{ allBooks.length }}</span>
+            <span class="stat-label">Total Books</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">{{ getFavoritesCount() }}</span>
+            <span class="stat-label">Total Favorites</span>
+          </div>
+        </div>
+        <div class="filter-pills">
+          <button [class.active]="selectedCategory === 'All'" (click)="selectCategory('All')">All</button>
+          <button [class.active]="selectedCategory === 'Free'" (click)="selectCategory('Free')">Free</button>
+          <button [class.active]="selectedCategory === 'Paperback'"
+            (click)="selectCategory('Paperback')">Paperback</button>
+          <button [class.active]="selectedCategory === 'Favorites'" (click)="selectCategory('Favorites')">Favorites</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bookshelf-section">
+    <div class="section-container">
+      @if (isLoading) {
+      <div class="loading-state">
+        <i class="bi bi-arrow-clockwise spin"></i>
+        <p>Browsing the shelves...</p>
+      </div>
+      } @else {
+      <div class="book-grid">
+        @for (book of filteredBooks; track book.id) {
+        <div class="book-card" (click)="openBookDetail(book)">
+          <div class="card-img-wrapper">
+            @if (book.coverImageUrl && !book.coverImageError) {
+            <img [appSecureImage]="getCoverUrl(book.coverImageUrl, book.id)" [alt]="book.title">
+            } @else {
+            <div class="card-img-placeholder">
+              <i class="bi bi-book"></i>
+              <span>Cover Missing</span>
+            </div>
+            }
+            <span class="price-badge" 
+              [class.badge-free]="book.price === 0 || book.type === 'FREE' || isPurchased(book.id)"
+              [class.badge-paid]="book.price > 0 && book.type !== 'FREE' && !isPurchased(book.id)"
+              [class.badge-paperback]="book.type === 'PAPERBACK'">
+              {{ isPurchased(book.id) ? 'PURCHASED' : ((book.price === 0 || book.type === 'FREE') ? 'FREE' : '$' + book.price) }}
+            </span>
+            <div class="card-stats">
+              <span title="Comments"><i class="bi bi-chat-dots"></i> {{ book.comments?.length || 0 }}</span>
+              <span title="Readers"><i class="bi bi-people"></i> {{ book.readersCount || 0 }}</span>
+              <span title="Favorites" class="fav-clickable" (click)="toggleFavorite(book, $event)">
+                <i class="bi" [ngClass]="isFavorited(book.id) ? 'bi-heart-fill text-danger' : 'bi-heart'"></i>
+                {{ book.favoritesCount || 0 }}
+              </span>
+            </div>
+          </div>
+          <div class="card-info">
+            <h5 class="card-title serif">{{ book.title }}</h5>
+            <p class="card-author">by {{ book.author }}</p>
+            @if (book.type === 'PAPERBACK') {
+            <button class="btn-order">
+              Order Paperback
+            </button>
+            }
+          </div>
+        </div>
+        } @empty {
+        <div class="empty-state">
+          <i class="bi bi-inbox"></i>
+          <h3>No books found</h3>
+          <p>Try selecting a different category.</p>
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- Amazon-style Product Modal -->
+  @if (isModalOpen && selectedBook) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="product-modal" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="closeModal()"><i class="bi bi-x-lg"></i></button>
+
+      <div class="product-container">
+        <!-- Left: Image -->
+        <div class="product-image-side">
+          <div class="main-img-box">
+            @if (selectedBook.coverImageUrl && !selectedBook.coverImageError) {
+            <img [appSecureImage]="getCoverUrl(selectedBook.coverImageUrl, selectedBook.id)" [alt]="selectedBook.title">
+            } @else {
+            <div class="modal-cover-placeholder">
+              <i class="bi bi-book"></i>
+              <span>Cover Not Available</span>
+            </div>
+            }
+          </div>
+          <div class="badge-row">
+            @if (selectedBook.isBestseller) { <span class="badge bestseller">Best Seller</span> }
+            @if (selectedBook.isFeatured) { <span class="badge featured">Featured</span> }
+          </div>
+        </div>
+
+        <!-- Middle: Details -->
+        <div class="product-details-side">
+          <h1 class="serif">{{ selectedBook.title }}</h1>
+          <p class="author-line">by <span class="author-name">{{ selectedBook.author }}</span></p>
+
+          <div class="ratings-row">
+            <div class="stars">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-half"></i>
+            </div>
+            <span class="count-link">{{ selectedBook.comments?.length || 0 }} reviews</span>
+            <span class="separator">|</span>
+            <span class="live-metric"><i class="bi bi-people-fill"></i> {{ selectedBook.readersCount || 0 }}
+              Readers</span>
+            <span class="separator">|</span>
+            <span class="live-metric"><i class="bi bi-heart-fill text-danger"></i> {{ selectedBook.favoritesCount || 0
+              }} Favorites</span>
+          </div>
+
+          <hr class="divider-hr">
+
+          <div class="price-row">
+            <span class="price-label">{{ isPurchased(selectedBook.id) ? 'Status:' : 'Price:' }}</span>
+            <span class="price-value">{{ isPurchased(selectedBook.id) ? 'Already Owned' : (selectedBook.price === 0 ? 'FREE' : '$' + selectedBook.price) }}</span>
+          </div>
+
+          <div class="format-options">
+            @if (selectedBook.type !== 'PAPERBACK') {
+            <div class="format-card selected">
+              <div class="f-type">Digital Edition</div>
+              <div class="f-price">{{ selectedBook.price === 0 ? 'Free' : '$' + selectedBook.price }}</div>
+              <div class="f-read">Read Instantly</div>
+            </div>
+            }
+            @if (selectedBook.type === 'PAPERBACK' || selectedBook.type === 'BOTH') {
+            <div class="format-card" [class.selected]="selectedBook.type === 'PAPERBACK'">
+              <div class="f-type">Paperback</div>
+              <div class="f-price">$24.99</div>
+              <div class="f-read">Best Quality Print</div>
+            </div>
+            }
+          </div>
+
+          <div class="description-box">
+            <h4 class="serif">Description</h4>
+            <p>{{ selectedBook.description || 'A mesmerizing tale that takes you through the depths of human emotion and
+              the heights of imagination.' }}</p>
+          </div>
+
+          <div class="tags-row">
+            @for (tag of (selectedBook.tags?.split(',') || ['Fiction', 'Drama']); track tag) {
+            <span class="tag-pill">#{{ tag.trim() }}</span>
+            }
+          </div>
+        </div>
+
+        <!-- Right: Actions -->
+        <div class="product-actions-side">
+          <div class="buy-box">
+            <div class="stock-status">In Stock.</div>
+
+            <div class="btn-stack">
+              @if (hasAccess || selectedBook.price === 0) {
+              <button class="btn-buy" (click)="orderBook(selectedBook)">Read Now</button>
+              } @else {
+              <button class="btn-buy" (click)="orderBook(selectedBook)">
+                {{ selectedBook.type === 'PAPERBACK' ? 'Order Paperback' : 'Order Now' }}
+              </button>
+              }
+              <button class="btn-cart" [class.active]="isFavorited(selectedBook.id)"
+                (click)="toggleFavorite(selectedBook, $event)">
+                <i class="bi" [ngClass]="isFavorited(selectedBook.id) ? 'bi-heart-fill text-danger' : 'bi-heart'"></i>
+                {{ isFavorited(selectedBook.id) ? 'Remove from Favorites' : 'Add to Favorites' }}
+              </button>
+            </div>
+
+            <div class="security-line">
+              <i class="bi bi-lock-fill"></i> Secure transaction
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom: Comments Section -->
+      <div class="comments-section">
+        <h3 class="serif">Customer Reviews</h3>
+
+        <!-- Add Comment Form -->
+        <div class="add-comment-box">
+          <h4 class="serif">Add your review</h4>
+          <div class="comment-input-wrapper">
+            <div class="user-avatar-mini"><i class="bi bi-person-circle"></i></div>
+            <textarea [(ngModel)]="newComment" placeholder="Write your thoughts about this book..." rows="3"></textarea>
+          </div>
+          <div class="comment-actions">
+            <button class="btn-post" (click)="addComment()" [disabled]="!newComment.trim()">Post Review</button>
+          </div>
+        </div>
+
+        @if (selectedBook.comments && selectedBook.comments.length > 0) {
+        <div class="comments-list">
+          @for (comment of selectedBook.comments; track comment.id) {
+          <div class="comment-item">
+            <div class="user-meta">
+              <div class="avatar"><i class="bi bi-person-circle"></i></div>
+              <span class="username">{{ comment.userName || (comment.userId?.substring(0, 8) + '...') || 'Anonymous'
+                }}</span>
+            </div>
+            <div class="comment-content">
+              <div class="stars-mini">
+                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
+                  class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                <span class="c-title">Verified Purchase</span>
+                @if (isMyComment(comment)) {
+                <div class="comment-actions-inline">
+                  <button class="btn-edit-link" (click)="startEdit(comment)">
+                    <i class="bi bi-pencil-square"></i> Edit
+                  </button>
+                  <button class="btn-delete-link" (click)="deleteComment(comment)">
+                    <i class="bi bi-trash3"></i> Delete
+                  </button>
+                </div>
+                }
+              </div>
+
+              @if (editingCommentId === comment.id) {
+              <div class="edit-comment-form">
+                <textarea [(ngModel)]="editingContent" rows="3"></textarea>
+                <div class="edit-actions">
+                  <button class="btn-cancel-sm" (click)="cancelEdit()">Cancel</button>
+                  <button class="btn-save-sm" (click)="saveEdit(comment)">Save Changes</button>
+                </div>
+              </div>
+              } @else {
+              <p>{{ comment.content }}</p>
+              <span class="c-date">
+                Reviewed on {{ comment.createdAt | date:'longDate' }}
+                @if (comment.updatedAt) { (Edited) }
+              </span>
+              }
+            </div>
+          </div>
+          }
+        </div>
+        } @else {
+        <p class="no-reviews">No reviews yet. Be the first to review this book!</p>
+        }
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Paperbacks Promo Section -->
+  <section class="paperbacks-promo">
+    <div class="section-container">
+      <div class="promo-card">
+        <div class="promo-content">
+          <div class="promo-text">
+            <h2 class="serif">Love to hold stories in your hands?</h2>
+            <p>Order your favorite paperbacks and cherish them forever.</p>
+            <button class="btn-premium-lg" (click)="selectCategory('Paperback')">
+              <span>Browse Paperbacks</span>
+              <i class="bi bi-arrow-right"></i>
+            </button>
+          </div>
+
+          <div class="promo-features">
+            <div class="p-feature">
+              <div class="p-icon"><i class="bi bi-printer"></i></div>
+              <div class="p-info">
+                <h6>Quality Print</h6>
+                <p>Best quality paper & print</p>
+              </div>
+            </div>
+            <div class="p-feature">
+              <div class="p-icon"><i class="bi bi-box-seam"></i></div>
+              <div class="p-info">
+                <h6>Safe Packaging</h6>
+                <p>Carefully packed with love</p>
+              </div>
+            </div>
+            <div class="p-feature">
+              <div class="p-icon"><i class="bi bi-globe"></i></div>
+              <div class="p-info">
+                <h6>Worldwide Shipping</h6>
+                <p>Delivering stories to your doorstep</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="promo-bg-decoration"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Order Details Form Modal -->
+  @if (isOrderFormOpen) {
+  <div class="modal-overlay modal-secondary" (click)="closeOrderForm()">
+    <div class="order-form-modal" (click)="$event.stopPropagation()">
+      <div class="order-form-header">
+        <h3 class="serif">Order Details</h3>
+        <button class="close-btn-minimal" (click)="closeOrderForm()"><i class="bi bi-x"></i></button>
+      </div>
+      <div class="order-form-body">
+        <div class="security-banner">
+          <i class="bi bi-shield-check"></i>
+          <span>Your details are secure. We need them so our team can reach out to you.</span>
+        </div>
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" [(ngModel)]="orderFormData.fullName" placeholder="Enter your full name">
+        </div>
+
+        <div class="form-group">
+          <label>WhatsApp Number</label>
+          <input type="text" [(ngModel)]="orderFormData.whatsappNumber" placeholder="+91 XXXXX XXXXX">
+        </div>
+
+        <div class="form-group">
+          <label>Special Instructions / Message (Optional)</label>
+          <textarea [(ngModel)]="orderFormData.message" placeholder="Any specific requirements or message for our team?"
+            rows="2"></textarea>
+        </div>
+
+        <div class="book-summary-mini">
+          <ng-container *ngIf="selectedBook?.coverImageUrl && !selectedBook?.coverImageError; else miniPlaceholder">
+            <img [appSecureImage]="getCoverUrl(selectedBook?.coverImageUrl, selectedBook?.id)" [alt]="">
+          </ng-container>
+          <ng-template #miniPlaceholder>
+            <div class="mini-placeholder"><i class="bi bi-book"></i></div>
+          </ng-template>
+          <div>
+            <div class="b-title">{{ selectedBook?.title }}</div>
+            <div class="b-author">by {{ selectedBook?.author }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="order-form-footer">
+        <button class="btn-cancel" (click)="closeOrderForm()">Cancel</button>
+        <button class="btn-submit-order" (click)="submitOrder()">Confirm Order</button>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Order Success Modal -->
+  @if (isSuccessModalOpen) {
+  <div class="modal-overlay modal-secondary">
+    <div class="success-modal" (click)="$event.stopPropagation()">
+      <div class="success-icon">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <h2 class="serif">Order Placed Successfully!</h2>
+      <p>Thank you for choosing BookVault. Your order has been received.</p>
+
+      <div class="ref-box">
+        <span class="ref-label">Reference ID</span>
+        <span class="ref-value">{{ lastReferenceId }}</span>
+      </div>
+
+      <p class="next-steps">A confirmation email has been sent to you. Our team will contact you on WhatsApp shortly.
+      </p>
+
+      <button class="btn-done" (click)="closeSuccessModal()">Great, thanks!</button>
+    </div>
+  </div>
+  }
+</div>

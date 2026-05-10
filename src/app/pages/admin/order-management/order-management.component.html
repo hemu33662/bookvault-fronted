@@ -1,0 +1,111 @@
+<div class="admin-page-container animate-fade">
+  <div class="page-header">
+    <div class="header-info">
+      <h2>Order Management</h2>
+      <p class="text-muted">Manage reader requests and physical book orders</p>
+    </div>
+    
+    <div class="filters">
+      <select (change)="filterByStatus($event)" class="form-select">
+        <option value="">All Orders</option>
+        <option value="PENDING">Pending</option>
+        <option value="PAYMENT_PENDING">Payment Pending</option>
+        <option value="SHIPMENT_PENDING">Shipment Pending</option>
+        <option value="DELIVERED">Delivered</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="REJECTED">Rejected</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="order-table-container">
+    <table class="table custom-table">
+      <thead>
+        <tr>
+          <th>Ref ID</th>
+          <th>Customer Name</th>
+          <th>Order Date</th>
+          <th>Type & Contact</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (order of filteredOrders; track order.id) {
+          <tr>
+            <td class="text-accent">#{{ order.referenceId }}</td>
+            <td>
+              <div class="user-info">
+                <span class="user-name">{{ order.customerName || 'Anonymous User' }}</span>
+                <span class="user-id">{{ order.userId }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="date-cell">
+                {{ order.createdAt | date:'mediumDate' }}
+                <small class="d-block">{{ order.createdAt | date:'shortTime' }}</small>
+              </div>
+            </td>
+            <td>
+              <div class="type-cell">
+                <span class="badge bg-light text-dark border mb-1">{{ order.type }}</span>
+                <div class="contact-info text-primary small">
+                  <i class="bi bi-whatsapp me-1"></i>
+                  {{ order.whatsappNumber || 'N/A' }}
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge" [ngClass]="'status-' + order.status.toLowerCase()">
+                {{ getStatusLabel(order.status) }}
+              </span>
+            </td>
+            <td>
+              <div class="dropdown">
+                <button class="btn-manage dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical me-1"></i> Manage
+                </button>
+                <ul class="dropdown-menu shadow-sm">
+                  <li><h6 class="dropdown-header">Update Status</h6></li>
+                  <li><a class="dropdown-item" (click)="updateStatus(order.id, 'PENDING')">Mark as Pending</a></li>
+                  <li><a class="dropdown-item" (click)="updateStatus(order.id, 'PAYMENT_PENDING')">Payment Pending</a></li>
+                  <li><a class="dropdown-item" (click)="updateStatus(order.id, 'SHIPMENT_PENDING')">Shipment Pending</a></li>
+                  <li><a class="dropdown-item" (click)="updateStatus(order.id, 'DELIVERED')">Order Delivered</a></li>
+                  <li><a class="dropdown-item" (click)="updateStatus(order.id, 'COMPLETED')">Mark Completed</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item text-danger" (click)="updateStatus(order.id, 'REJECTED')">Reject Order</a></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          @if (order.message || order.shippingAddress) {
+            <tr class="details-row">
+              <td colspan="6" class="border-0">
+                <div class="details-content">
+                  @if (order.shippingAddress) {
+                    <div class="detail-item">
+                      <span class="detail-label">Shipping To:</span>
+                      <span class="detail-value">{{ order.shippingAddress }}</span>
+                    </div>
+                  }
+                  @if (order.message) {
+                    <div class="detail-item">
+                      <span class="detail-label">Reader Note:</span>
+                      <span class="detail-value italic">"{{ order.message }}"</span>
+                    </div>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        } @empty {
+          <tr>
+            <td colspan="6" class="text-center p-5">
+              <p class="text-muted mb-0">No records found for the selected filter.</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

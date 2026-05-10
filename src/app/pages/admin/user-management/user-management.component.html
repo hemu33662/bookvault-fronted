@@ -1,0 +1,59 @@
+<div class="admin-page-container">
+  <div class="page-header">
+    <h2>User Management</h2>
+    <div class="search-bar">
+      <input type="text" placeholder="Search by name or email..." class="form-control bg-dark text-white border-secondary">
+    </div>
+  </div>
+
+  <div class="user-table-container mt-4 animate-fade">
+    <table class="table table-hover table-dark custom-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Join Date</th>
+          <th>Devices</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users; track user.id) {
+          <tr>
+            <td>
+              <div class="user-info">
+                <div class="user-avatar">{{ user.email.charAt(0).toUpperCase() }}</div>
+                <div>
+                  <div class="user-email">{{ user.email }}</div>
+                  <div class="user-id text-muted small">UID: {{ user.firebaseUid }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="user.role === 'ADMIN' ? 'bg-primary' : 'bg-secondary'">
+                {{ user.role }}
+              </span>
+            </td>
+            <td>
+              <span class="status-dot" [ngClass]="user.status === 'ACTIVE' ? 'status-active' : 'status-blocked'"></span>
+              {{ user.status }}
+            </td>
+            <td>{{ user.createdAt | date }}</td>
+            <td>{{ user.activeDevicesCount || 0 }} / 3</td>
+            <td>
+              <div class="btn-group">
+                @if (user.status === 'ACTIVE') {
+                  <button class="btn btn-sm btn-outline-danger" (click)="toggleStatus(user, 'BLOCKED')">Block</button>
+                } @else {
+                  <button class="btn btn-sm btn-outline-success" (click)="toggleStatus(user, 'ACTIVE')">Unblock</button>
+                }
+                <button class="btn btn-sm btn-outline-info">Details</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

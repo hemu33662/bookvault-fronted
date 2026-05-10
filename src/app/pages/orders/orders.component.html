@@ -1,0 +1,55 @@
+<div class="orders-page">
+  <section class="page-header">
+    <div class="section-container">
+      <h1 class="serif">Order History</h1>
+      <p>Manage and track your book purchases.</p>
+    </div>
+  </section>
+
+  <section class="orders-section">
+    <div class="section-container">
+      @if (isLoading) {
+        <div class="loading-state">
+          <i class="bi bi-arrow-clockwise spin"></i>
+          <p>Loading your orders...</p>
+        </div>
+      } @else {
+        @if (orders.length > 0) {
+          <div class="orders-table-wrapper">
+            <table class="orders-table">
+              <thead>
+                <tr>
+                  <th>Reference ID</th>
+                  <th>Book Title</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (order of orders; track order.id) {
+                  <tr>
+                    <td>{{ order.referenceId || ('#' + order.id) }}</td>
+                    <td class="book-title">{{ order.bookTitle }}</td>
+                    <td><span class="type-badge">{{ order.type }}</span></td>
+                    <td class="amount">${{ order.amount || order.price }}</td>
+                    <td><span class="status-pill" [ngClass]="getStatusClass(order.status)">{{ order.status || 'Pending' }}</span></td>
+                    <td class="date">{{ (order.createdAt | date:'mediumDate') || 'Recently' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="empty-orders">
+            <i class="bi bi-bag-x"></i>
+            <h3>No orders yet</h3>
+            <p>You haven't placed any orders. Your purchase history will appear here once you buy or order a book.</p>
+            <button class="btn-primary" routerLink="/app/library">Browse Library</button>
+          </div>
+        }
+      }
+    </div>
+  </section>
+</div>

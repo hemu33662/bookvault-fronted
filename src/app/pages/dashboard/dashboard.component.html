@@ -1,0 +1,110 @@
+<div class="dashboard-page">
+  <!-- Header Section -->
+  <section class="dashboard-header">
+    <div class="section-container">
+      <div class="welcome-box">
+        <div class="welcome-content">
+          <h1 class="serif">My Desk</h1>
+          <p class="subtitle">Welcome back, {{ userName }}. Your library awaits.</p>
+        </div>
+        <div class="quick-stats">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-cart-check"></i></div>
+            <div class="stat-info">
+              <span class="stat-value">{{ stats.purchased }}</span>
+              <span class="stat-label">Purchased</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-book"></i></div>
+            <div class="stat-info">
+              <span class="stat-value">{{ stats.read }}</span>
+              <span class="stat-label">Read</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-heart"></i></div>
+            <div class="stat-info">
+              <span class="stat-value">{{ stats.favorites }}</span>
+              <span class="stat-label">Favorites</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recently Read Section -->
+  <section class="recent-section">
+    <div class="section-container">
+      <div class="section-header">
+        <h2 class="serif">Recently Read</h2>
+        <a routerLink="/app/library" class="view-all">View Library <i class="bi bi-arrow-right"></i></a>
+      </div>
+
+      @if (isLoading) {
+      <div class="loading-placeholder">
+        <i class="bi bi-arrow-clockwise spin"></i>
+        <p>Retrieving your stories...</p>
+      </div>
+      } @else {
+      <div class="recent-grid">
+        @for (book of recentlyRead; track book.id) {
+        <div class="recent-card">
+          <div class="recent-img premium-placeholder" *ngIf="!book.coverImageUrl">
+            <div class="gold-seal">
+              <i class="bi bi-journal-bookmark-fill"></i>
+              <span>VAULT</span>
+            </div>
+            <div class="progress-overlay">
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: 0%;"></div>
+              </div>
+              <span class="progress-text">NEW ACQUISITION</span>
+            </div>
+          </div>
+          <div class="recent-img" *ngIf="book.coverImageUrl">
+            <img [appSecureImage]="getCoverUrl(book.coverImageUrl, book.id)" [alt]="book.title">
+            <div class="progress-overlay">
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: 75%;"></div>
+              </div>
+              <span class="progress-text">75% SECURED</span>
+            </div>
+          </div>
+          <div class="recent-info">
+            <h5 class="serif">{{ book.title }}</h5>
+            <p>by {{ book.author }}</p>
+            <button class="btn-continue" [routerLink]="['/app/reader', book.id]">Open Book</button>
+          </div>
+        </div>
+        } @empty {
+        <div class="empty-recent">
+          <i class="bi bi-book-half"></i>
+          <p>You haven't started any books yet. Head over to the Library to begin your journey!</p>
+          <button class="btn-primary" routerLink="/app/library">Go to Library</button>
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- Recommendations / Actions -->
+  <section class="actions-section">
+    <div class="section-container">
+      <div class="action-grid">
+        <div class="action-card library-promo">
+          <h3>Library Catalog</h3>
+          <p>Browse our entire collection of premium digital stories.</p>
+          <button routerLink="/app/library">Browse Catalog</button>
+        </div>
+        <div class="action-card orders-promo">
+          <h3>Desk Archive</h3>
+          <p>Review your acquisition history and reading logs.</p>
+          <button routerLink="/app/orders">View History</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

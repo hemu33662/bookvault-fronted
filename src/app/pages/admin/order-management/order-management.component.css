@@ -1,0 +1,231 @@
+.admin-page-container {
+  padding: 2rem;
+  background: #F8FAFC;
+  min-height: 100vh;
+  position: relative;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #E2E8F0;
+}
+
+.page-header h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1E293B;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.text-muted {
+  color: #64748B !important;
+  font-size: 0.875rem;
+}
+
+/* Filters */
+.filters select {
+  background: white;
+  border: 1px solid #E2E8F0;
+  color: #1E293B;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.filters select:focus {
+  border-color: #6366F1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  outline: none;
+}
+
+/* Table Container */
+.order-table-container {
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.custom-table {
+  width: 100%;
+  margin-bottom: 0;
+  color: #334155;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.custom-table thead th {
+  background: #F8FAFC;
+  padding: 1rem 1.5rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: #64748B;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.custom-table tbody tr:not(.details-row) {
+  transition: all 0.2s ease;
+}
+
+.custom-table tbody tr:not(.details-row):hover {
+  background: #F1F5F9;
+}
+
+.custom-table td {
+  padding: 1.25rem 1.5rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.text-accent {
+  color: #6366F1;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+
+/* User Info Cell */
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 700;
+  color: #0F172A; /* High contrast dark blue/black */
+  font-size: 0.9375rem;
+}
+
+.user-id {
+  font-size: 0.75rem;
+  color: #64748B;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 0.35rem 0.875rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-pending { background: #F1F5F9; color: #475569; }
+.status-payment_pending { background: #FEF3C7; color: #92400E; }
+.status-shipment_pending { background: #EDE9FE; color: #5B21B6; }
+.status-delivered { background: #D1FAE5; color: #065F46; }
+.status-completed { background: #DBEAFE; color: #1E40AF; }
+.status-rejected { background: #FEE2E2; color: #991B1B; }
+
+/* Details Row */
+.details-row {
+  background: #FAFBFC;
+}
+
+.details-content {
+  padding: 1.25rem 2rem;
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  margin: 0.5rem 1.5rem 1.5rem;
+}
+
+.detail-item {
+  margin-bottom: 0.5rem;
+  display: flex;
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94A3B8;
+  text-transform: uppercase;
+  min-width: 120px;
+}
+
+.detail-value {
+  color: #334155;
+  font-size: 0.875rem;
+}
+
+.italic {
+  font-style: italic;
+  color: #64748B;
+}
+
+/* Actions */
+.btn-manage {
+  background: white;
+  border: 1px solid #E2E8F0;
+  color: #475569;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-manage:hover {
+  border-color: #6366F1;
+  color: #6366F1;
+  background: #F8FAFC;
+}
+
+.dropdown-menu {
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 4px;
+}
+
+.dropdown-item:hover {
+  background: #F1F5F9;
+  color: #6366F1;
+}
+
+/* Date Cell */
+.date-cell {
+  font-size: 0.875rem;
+  color: #334155;
+}
+
+.date-cell small {
+  color: #94A3B8;
+}
+
+/* Animations */
+.animate-fade {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

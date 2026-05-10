@@ -1,0 +1,72 @@
+<div class="auth-page">
+  <div class="auth-split">
+    <!-- Left Side: Atmospheric Aesthetic -->
+    <div class="auth-visual register-visual">
+      <div class="visual-overlay"></div>
+      <div class="visual-content animate-fade">
+        <h1 class="serif display-3">Start Your Story <span class="cursive heart">♡</span></h1>
+        <p class="serif italic">“Between these pages, a thousand worlds quietly wait for you.”</p>
+        <div class="decorative-line mt-4"></div>
+      </div>
+      <div class="visual-footer">
+        <p class="cursive">Tarangini Writes</p>
+      </div>
+    </div>
+
+    <!-- Right Side: Register Form -->
+    <div class="auth-form-side">
+      <div class="auth-card-premium animate-slide-up">
+        <div class="text-center mb-5">
+          <div class="auth-logo mb-3">
+            <i class="bi bi-feather fs-1"></i>
+          </div>
+          <h2 class="serif display-5">Create Account</h2>
+          <p class="text-muted">Join our community of readers and writers.</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-floating mb-4">
+            <input type="text" class="form-control premium-input" id="regName" [(ngModel)]="name" name="name"
+              required placeholder="John Doe">
+            <label for="regName">Full Name</label>
+          </div>
+
+          <div class="form-floating mb-4">
+            <input type="email" class="form-control premium-input" id="regEmail" [(ngModel)]="email" name="email"
+              required placeholder="name@example.com">
+            <label for="regEmail">Email Address</label>
+          </div>
+
+          <div class="form-floating mb-4">
+            <input type="password" class="form-control premium-input" id="regPassword" [(ngModel)]="password"
+              name="password" required placeholder="Password">
+            <label for="regPassword">Password</label>
+          </div>
+
+          <div *ngIf="errorMessage" class="alert alert-danger border-0 small py-2 rounded-3 mb-4">
+            <i class="bi bi-exclamation-circle me-2"></i> {{ errorMessage }}
+          </div>
+          <div *ngIf="successMessage" class="alert alert-success border-0 small py-2 rounded-3 mb-4">
+            <i class="bi bi-check-circle me-2"></i> {{ successMessage }}
+          </div>
+
+          <button type="submit" class="btn btn-auth-primary w-100 py-3 mb-4" [disabled]="isLoading">
+            {{ isLoading ? 'Writing...' : 'Join the Story' }} <i class="bi bi-pencil-square ms-2"></i>
+          </button>
+
+          <div class="text-center">
+            <p class="small text-muted">Already part of the journey?
+              <a routerLink="/login" class="text-accent fw-bold text-decoration-none ms-1">Sign in here</a>
+            </p>
+          </div>
+        </form>
+
+        <div class="auth-back-link mt-5 pt-4 border-top text-center">
+          <a href="/" class="btn btn-link text-muted text-decoration-none small">
+            <i class="bi bi-house-door me-2"></i> Return to Homepage
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

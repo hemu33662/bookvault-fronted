@@ -1,0 +1,59 @@
+<div class="admin-page-container">
+  <div class="page-header">
+    <div>
+      <h2>Security Dashboard</h2>
+      <p class="text-muted">Monitor active sessions and platform security alerts.</p>
+    </div>
+    <button class="btn btn-danger" (click)="logoutAll()">
+      <i class="bi bi-shield-slash"></i> Global Force Logout
+    </button>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <div class="stat-card bg-dark border-secondary p-4 rounded-4 mb-4">
+        <div class="text-muted small">Active Sessions</div>
+        <div class="h2 text-info">{{ sessions.length }}</div>
+        <div class="small text-success"><i class="bi bi-check-circle"></i> All systems secure</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card bg-dark border-secondary p-4 rounded-4 mb-4">
+        <div class="text-muted small">Suspicious Activities</div>
+        <div class="h2 text-warning">0</div>
+        <div class="small text-muted">Last 24 hours</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sessions-container mt-4 animate-fade">
+    <h4>Active Sessions</h4>
+    <div class="list-group">
+      @for (session of sessions; track session.id) {
+        <div class="list-group-item bg-dark text-white border-secondary mb-2 rounded-3 d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <div class="device-icon me-3">
+              <i class="bi" [ngClass]="session.deviceName?.includes('Mobile') ? 'bi-phone' : 'bi-laptop'"></i>
+            </div>
+            <div>
+              <div class="fw-bold">{{ session.userEmail }}</div>
+              <div class="small text-muted">{{ session.deviceName }} • {{ session.location }}</div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="me-4 text-end">
+              <div class="small text-muted">Last Activity</div>
+              <div class="small">{{ session.lastActivity | date:'short' }}</div>
+            </div>
+            <button class="btn btn-sm btn-outline-danger" (click)="revokeSession(session.id)">Terminate</button>
+          </div>
+        </div>
+      } @empty {
+        <div class="text-center p-5 text-muted bg-dark rounded-4">
+          <i class="bi bi-shield-check h1 d-block mb-3"></i>
+          No active suspicious sessions found.
+        </div>
+      }
+    </div>
+  </div>
+</div>

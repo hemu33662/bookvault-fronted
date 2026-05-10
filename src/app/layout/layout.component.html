@@ -1,0 +1,103 @@
+<div class="layout-container">
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" [class.show]="isSidebarOpen" (click)="closeSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.open]="isSidebarOpen" [class.minimized]="isMinimized">
+    <div class="sidebar-header">
+      <div class="brand">
+        <i class="bi bi-journal-bookmark-fill"></i>
+        <span class="brand-text serif" *ngIf="!isMinimized">BookVault</span>
+      </div>
+      <button class="minimize-btn" (click)="toggleMinimize()">
+        <i class="bi" [class.bi-chevron-left]="!isMinimized" [class.bi-chevron-right]="isMinimized"></i>
+      </button>
+    </div>
+
+    <nav class="nav-menu">
+      <div class="nav-section" *ngIf="!isMinimized">Main Menu</div>
+      <a routerLink="/" class="nav-item" title="Home">
+        <i class="bi bi-house-door"></i>
+        <span *ngIf="!isMinimized">Public Storefront</span>
+      </a>
+      <a routerLink="/app/library" routerLinkActive="active" class="nav-item" title="Library">
+        <i class="bi bi-bookshelf"></i>
+        <span *ngIf="!isMinimized">Library</span>
+      </a>
+      <a routerLink="/app/dashboard" routerLinkActive="active" class="nav-item" title="My Desk">
+        <i class="bi bi-person-workspace"></i>
+        <span *ngIf="!isMinimized">My Desk</span>
+      </a>
+      <a routerLink="/app/notifications" routerLinkActive="active" class="nav-item" title="Notifications">
+        <i class="bi bi-bell"></i>
+        <span *ngIf="!isMinimized">Notifications</span>
+      </a>
+
+      <div class="nav-section mt-4" *ngIf="!isMinimized">Personal</div>
+      <a routerLink="/app/favorites" routerLinkActive="active" class="nav-item" title="Favorites">
+        <i class="bi bi-bookmark-heart"></i>
+        <span *ngIf="!isMinimized">Favorites</span>
+      </a>
+      <a routerLink="/app/orders" routerLinkActive="active" class="nav-item" title="Orders">
+        <i class="bi bi-bag-check"></i>
+        <span *ngIf="!isMinimized">Orders</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="bi bi-box-arrow-left"></i>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-wrapper">
+    <header class="main-header">
+      <div class="header-left">
+        <button class="toggle-btn" (click)="toggleSidebar()">
+          <i class="bi bi-list"></i>
+        </button>
+        <div class="header-search">
+          <i class="bi bi-search"></i>
+          <input type="text" [(ngModel)]="searchTerm" (input)="onGlobalSearch()" placeholder="Search your library...">
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Return to Home -->
+        <a routerLink="/" class="btn btn-outline-secondary btn-sm rounded-pill d-none d-md-flex align-items-center gap-2 me-3">
+          <i class="bi bi-house-door"></i> View Storefront
+        </a>
+
+        <button class="btn-icon" routerLink="/app/notifications" title="Notifications">
+          <i class="bi bi-bell"></i>
+        </button>
+
+        <div class="dropdown">
+          <div class="user-pill dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+            <span class="user-name d-none d-sm-inline">{{ userName }}</span>
+            <div class="user-avatar">{{ userName[0] }}</div>
+          </div>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 animate-fade-in" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item py-2" routerLink="/">
+              <i class="bi bi-house-door me-2"></i> Return to Home
+            </a></li>
+            <li><a class="dropdown-item py-2" routerLink="/app/library">
+              <i class="bi bi-bookshelf me-2"></i> My Library
+            </a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item py-2 text-danger" (click)="logout()" style="cursor: pointer;">
+              <i class="bi bi-box-arrow-right me-2"></i> Log Out
+            </a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-body">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

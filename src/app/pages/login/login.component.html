@@ -1,0 +1,71 @@
+<div class="auth-page">
+  <div class="auth-split">
+    <!-- Left Side: Atmospheric Aesthetic -->
+    <div class="auth-visual">
+      <div class="visual-overlay"></div>
+      <div class="visual-content animate-fade">
+        <h1 class="serif display-3">A New Chapter <span class="cursive heart">♡</span></h1>
+        <p class="serif italic">“Let every page carry the breathings of your heart.”</p>
+        <div class="decorative-line mt-4"></div>
+      </div>
+      <div class="visual-footer">
+        <p class="cursive">Tarangini Writes</p>
+      </div>
+    </div>
+
+    <!-- Right Side: Login Form -->
+    <div class="auth-form-side">
+      <div class="auth-card-premium animate-slide-up">
+        <div class="text-center mb-5">
+          <div class="auth-logo mb-3">
+            <i class="bi bi-journal-bookmark-fill fs-1"></i>
+          </div>
+          <h2 class="serif display-5">Welcome Back</h2>
+          <p class="text-muted">Continue your story with us.</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-floating mb-4">
+            <input type="email" class="form-control premium-input" id="emailInput" [(ngModel)]="email" name="email"
+              required placeholder="name@example.com">
+            <label for="emailInput">Email Address</label>
+          </div>
+
+          <div class="form-floating mb-4">
+            <input type="password" class="form-control premium-input" id="passwordInput" [(ngModel)]="password"
+              name="password" required placeholder="Password">
+            <label for="passwordInput">Password</label>
+          </div>
+
+          <div *ngIf="errorMessage" class="alert alert-danger border-0 small py-2 rounded-3 mb-4">
+            <i class="bi bi-exclamation-circle me-2"></i> {{ errorMessage }}
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-4 px-1">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input custom-checkbox" id="remember">
+              <label class="form-check-label small text-muted" for="remember">Keep me signed in</label>
+            </div>
+            <a href="#" class="small text-decoration-none text-accent fw-bold">Forgot?</a>
+          </div>
+
+          <button type="submit" class="btn btn-auth-primary w-100 py-3 mb-4" [disabled]="isLoading">
+            {{ isLoading ? 'Entering...' : 'Step Into Stories' }} <i class="bi bi-arrow-right ms-2"></i>
+          </button>
+
+          <div class="text-center">
+            <p class="small text-muted">Don't have an account?
+              <a href="/register" class="text-accent fw-bold text-decoration-none ms-1">Create Your Chapter</a>
+            </p>
+          </div>
+        </form>
+
+        <div class="auth-back-link mt-5 pt-4 border-top text-center">
+          <a href="/" class="btn btn-link text-muted text-decoration-none small">
+            <i class="bi bi-house-door me-2"></i> Return to Homepage
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

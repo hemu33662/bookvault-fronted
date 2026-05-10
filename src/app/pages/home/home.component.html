@@ -1,0 +1,350 @@
+<div class="home-container" id="home">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg py-4">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" (click)="scrollTo('home')" style="cursor: pointer;">
+        <img src="favicon.ico" alt="Logo" class="navbar-logo rounded-circle">
+        <span class="serif fs-4">Tarangini Writes <span class="cursive heart-small text-bv-accent">♡</span></span>
+      </a>
+      <button class="navbar-toggler" (click)="isMenuOpen = !isMenuOpen">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" [class.show]="isMenuOpen">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link px-3" (click)="scrollTo('home')" style="cursor: pointer;">Home</a>
+          </li>
+          <li class="nav-item"><a class="nav-link px-3" (click)="scrollTo('bookshelf')"
+              style="cursor: pointer;">Bookshelf</a></li>
+          <li class="nav-item"><a class="nav-link px-3" (click)="selectCategory('Free'); scrollTo('bookshelf')"
+              style="cursor: pointer;">Free Stories</a></li>
+          <li class="nav-item"><a class="nav-link px-3" (click)="selectCategory('Paperback'); scrollTo('bookshelf')"
+              style="cursor: pointer;">Paperbacks</a></li>
+          <li class="nav-item"><a class="nav-link px-3" (click)="selectCategory('Notifications'); scrollTo('bookshelf')"
+              style="cursor: pointer;">Notifications</a></li>
+          <li class="nav-item"><a class="nav-link px-3" (click)="scrollTo('about')" style="cursor: pointer;">About
+              Us</a></li>
+          <li class="nav-item"><a class="nav-link px-3" (click)="scrollTo('contact')" style="cursor: pointer;">Contact
+              Us</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn-note-circle" (click)="selectCategory('Notifications'); scrollTo('bookshelf')">
+            <i class="bi bi-bell"></i>
+            <span class="badge-dot" *ngIf="notifications.length > 0"></span>
+          </button>
+          <button class="btn btn-bv-dark" (click)="goToLogin()">
+            <i class="bi bi-person-circle me-2"></i> My Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero-section-premium">
+    <div class="hero-bg-image" [style.background-image]="'url(assets/hero-brand.png)'"></div>
+    <div class="hero-overlay-gradient"></div>
+    <div class="container hero-content-premium">
+      <div class="hero-button-wrapper text-start">
+        <button class="btn btn-bv-dark px-4 py-2 d-flex align-items-center gap-2" (click)="scrollTo('bookshelf')">
+          Explore Stories <i class="bi bi-arrow-right-circle fs-5"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Removed Torn Paper Divider -->
+  </header>
+
+  <!-- Announcement Section -->
+  <section class="announcement-section py-2">
+    <div class="container">
+      <div class="announcement-banner glass-panel p-3 text-center">
+        <div class="d-flex align-items-center justify-content-center flex-wrap">
+          <span class="badge bg-bv-accent me-3 pulse-animation">NEW</span>
+          <p class="mb-0 serif italic fs-5">"As of now, we are going to start a new journey together..."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bookshelf Section -->
+  <section id="bookshelf" class="bookshelf-section py-5">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="display-4 serif section-title">Bookshelf <span class="cursive heart-small">♡</span></h2>
+
+        <!-- Filter Pills -->
+        <ul class="nav nav-pills justify-content-center mt-4">
+          <li class="nav-item"><a class="nav-link" [class.active]="selectedCategory === 'All'"
+              (click)="selectCategory('All')">All</a></li>
+          <li class="nav-item"><a class="nav-link" [class.active]="selectedCategory === 'Free'"
+              (click)="selectCategory('Free')">Free</a></li>
+          <li class="nav-item"><a class="nav-link" [class.active]="selectedCategory === 'Paid eBook'"
+              (click)="selectCategory('Paid eBook')">Paid eBook</a></li>
+          <li class="nav-item"><button class="nav-link" [class.active]="selectedCategory === 'Paperback'"
+              (click)="selectCategory('Paperback')">Paperbacks</button></li>
+          <li class="nav-item"><button class="nav-link" [class.active]="selectedCategory === 'Notifications'"
+              (click)="selectCategory('Notifications')">Notifications</button></li>
+        </ul>
+      </div>
+
+      <!-- Book Grid / Notifications -->
+      @if (isNotificationsMode) {
+      <div class="notification-view-home animate-fade mb-5">
+        <div class="row g-4 justify-content-center">
+          @for (note of notifications; track note.id) {
+          <div class="col-md-10 col-lg-8">
+            <div class="note-card-home">
+              <div class="note-icon">
+                <i class="bi bi-megaphone-fill"></i>
+              </div>
+              <div class="note-content">
+                <div class="note-date text-muted small">{{ note.createdAt | date:'longDate' }}</div>
+                <p class="note-message serif fs-5">{{ note.message }}</p>
+              </div>
+            </div>
+          </div>
+          } @empty {
+          <div class="empty-state-home text-center py-5">
+            <i class="bi bi-bell-slash display-1 text-muted"></i>
+            <h3 class="mt-3">No recent notifications</h3>
+            <p>We'll update you here soon!</p>
+          </div>
+          }
+        </div>
+      </div>
+      } @else {
+      <div class="row g-3 g-md-5">
+        @for (book of filteredBooks; track book.id) {
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="book-card-premium" (click)="goToLogin()" style="cursor: pointer;">
+            <div class="card-img-wrapper position-relative">
+              <img [appSecureImage]="getCoverUrl(book.coverImageUrl, book.id)" class="card-img-top" [alt]="book.title">
+              <span class="price-badge"
+                [ngClass]="{'badge-free': book.price === 0, 'badge-paid': book.price > 0, 'badge-paperback': book.type === 'PAPERBACK'}">
+                {{ book.price === 0 ? 'FREE' : '₹' + book.price }}
+              </span>
+            </div>
+            <div class="card-info">
+              <h5 class="card-title serif">{{ book.title }}</h5>
+              <p class="card-desc text-muted">{{ book.description || 'A story of love, loss and memories that never
+                fade.' }}</p>
+              <button class="btn btn-card-action w-100" (click)="goToLogin()">
+                {{ book.type === 'PAPERBACK' ? 'Order Paperback' : (book.price === 0 ? 'Read Now' : 'Buy eBook') }}
+              </button>
+              <div class="card-meta d-flex align-items-center mt-3">
+                <i class="bi bi-chat-left-text me-2"></i> {{ book.comments?.length || 0 }}
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+
+        <!-- Coming Soon Placeholder -->
+        <div class="col-6 col-md-4 col-lg-2">
+          <div
+            class="book-card-placeholder d-flex flex-column align-items-center justify-content-center text-center p-4">
+            <i class="bi bi-flower1 mb-3 fs-1 text-muted"></i>
+            <h5 class="serif">More Stories Coming Soon...</h5>
+            <button class="btn btn-outline-secondary btn-sm mt-3 px-4 rounded-pill">Stay Tuned</button>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- Features Section (Paperback focus) -->
+  <section class="features-section py-5">
+    <div class="container">
+      <div class="features-box glass-panel p-5 rounded-5">
+        <div class="row align-items-center">
+          <div class="col-md-6 mb-4 mb-md-0">
+            <div class="d-flex align-items-center mb-4">
+              <div class="icon-circle me-3"><i class="bi bi-book-half"></i></div>
+              <h3 class="serif mb-0">Love to hold stories in your hands?</h3>
+            </div>
+            <p class="text-muted fs-5">Order your favorite paperbacks and cherish them forever.</p>
+            <button class="btn btn-bv-dark px-4 mt-3"
+              (click)="selectCategory('Paperback'); scrollTo('bookshelf')">Browse Paperbacks</button>
+          </div>
+          <div class="col-md-6">
+            <div class="row g-4">
+              <div class="col-6">
+                <div class="feature-item text-center">
+                  <i class="bi bi-award fs-2 mb-2 d-block"></i>
+                  <h6>Quality Print</h6>
+                  <p class="small text-muted">Best quality paper & print</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="feature-item text-center">
+                  <i class="bi bi-box-seam fs-2 mb-2 d-block"></i>
+                  <h6>Safe Packaging</h6>
+                  <p class="small text-muted">Carefully packed with love</p>
+                </div>
+              </div>
+              <div class="col-12 text-center mt-4">
+                <div class="feature-item">
+                  <i class="bi bi-globe2 fs-2 mb-2 d-block"></i>
+                  <h6>Worldwide Shipping</h6>
+                  <p class="small text-muted">Delivering stories to your doorstep</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Us Section -->
+  <section id="about" class="about-section py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="glass-panel p-5 rounded-5 overflow-hidden position-relative">
+            <div class="about-bg-decoration"></div>
+            <div class="row g-5 align-items-center">
+              <div class="col-md-7">
+                <h6 class="text-bv-accent text-uppercase letter-spacing-2 mb-3">Our Story</h6>
+                <h2 class="display-5 serif mb-4">About Us <span class="cursive heart-small">♡</span></h2>
+
+                <p class="lead mb-4">Every great story begins with a small idea… and ours began with a shared love for
+                  books, people, and untold stories.</p>
+
+                <div *ngIf="isAboutExpanded" class="animate-fade">
+                  <p class="text-muted mb-4">We are a team of young creators, dreamers, writers, readers, and builders
+                    who
+                    came together with one mission—to create a space where stories can truly live. Our journey started
+                    as
+                    beginners, but with a powerful vision.</p>
+
+                  <p class="text-muted mb-4">We travel through conversations, experiences, memories, and real human
+                    emotions—collecting stories from everyday people, hidden voices, and unique journeys. Some stories
+                    arrive as whispers, some as life lessons, and some as pure imagination. Our writers transform these
+                    moments into meaningful words, while our technical team brings them to life through a seamless
+                    digital
+                    experience.</p>
+                </div>
+
+                <button class="btn btn-outline-bv-accent btn-sm mb-4" (click)="isAboutExpanded = !isAboutExpanded">
+                  {{ isAboutExpanded ? 'Show Less' : 'Read More' }}
+                </button>
+              </div>
+              <div class="col-md-5">
+                <div class="offer-card p-4 rounded-4 bg-white shadow-sm">
+                  <h5 class="serif mb-4">Today, we proudly offer:</h5>
+                  <ul class="list-unstyled d-flex flex-column gap-3">
+                    <li class="d-flex align-items-start">
+                      <i class="bi bi-check2-circle text-bv-accent me-3 mt-1"></i>
+                      <span>Digital eBooks for instant reading</span>
+                    </li>
+                    <li class="d-flex align-items-start">
+                      <i class="bi bi-check2-circle text-bv-accent me-3 mt-1"></i>
+                      <span>Premium paid books for passionate readers</span>
+                    </li>
+                    <li class="d-flex align-items-start">
+                      <i class="bi bi-check2-circle text-bv-accent me-3 mt-1"></i>
+                      <span>Carefully crafted paperbacks you can hold, feel, and treasure</span>
+                    </li>
+                    <li class="d-flex align-items-start">
+                      <i class="bi bi-check2-circle text-bv-accent me-3 mt-1"></i>
+                      <span>Original stories inspired by real people and real emotions</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="manifesto-section mt-5 pt-5 border-top">
+              <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                  <p class="serif italic fs-5">"We may be young. We may be at the beginning of our journey. But every
+                    page we publish carries passion, honesty, creativity, and dedication."</p>
+                </div>
+                <div class="col-md-6 d-flex flex-wrap gap-2 align-items-center justify-content-md-end">
+                  <span class="manifesto-pill">We preserve voices</span>
+                  <span class="manifesto-pill">We build stories</span>
+                  <span class="manifesto-pill">We create worlds</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="about-footer mt-5 text-center">
+              <p class="mb-2">Thank you for believing in new beginnings, fresh talent, and stories that deserve to be
+                told.</p>
+              <h4 class="cursive fs-2">This is only Chapter One.</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Us Section -->
+  <section id="contact" class="contact-section py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+          <h2 class="serif mb-4">Contact Us</h2>
+          <p class="text-muted mb-5">Have a question or just want to say hi? We'd love to hear from you!</p>
+          <div class="d-flex justify-content-center gap-4 flex-wrap">
+            <a href="mailto:taranginiwrites&#64;gmail.com"
+              class="contact-method-card glass-panel p-4 rounded-4 text-decoration-none text-dark">
+              <div class="icon-circle mx-auto mb-3"><i class="bi bi-envelope"></i></div>
+              <h6 class="mb-1">Email Us</h6>
+              <p class="small text-muted mb-0">taranginiwrites&#64;gmail.com</p>
+            </a>
+            <a href="https://www.instagram.com/tarangini.writes" target="_blank"
+              class="contact-method-card glass-panel p-4 rounded-4 text-decoration-none text-dark">
+              <div class="icon-circle mx-auto mb-3"><i class="bi bi-instagram"></i></div>
+              <h6 class="mb-1">Follow Us</h6>
+              <p class="small text-muted mb-0">&#64;tarangini.writes</p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer-premium pt-5 pb-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h3 class="serif mb-4">Tarangini Writes <span class="cursive">♡</span></h3>
+          <p class="text-muted small">Writing feelings, one story at a time.</p>
+        </div>
+        <div class="col-md-2 col-6 mb-4 mb-md-0">
+          <h6>Quick Links</h6>
+          <ul class="list-unstyled text-muted small">
+            <li><a (click)="scrollTo('home')" style="cursor: pointer;">Home</a></li>
+            <li><a (click)="scrollTo('bookshelf')" style="cursor: pointer;">Bookshelf</a></li>
+            <li><a (click)="selectCategory('Free'); scrollTo('bookshelf')" style="cursor: pointer;">Free Stories</a>
+            </li>
+            <li><a (click)="selectCategory('Paperback'); scrollTo('bookshelf')" style="cursor: pointer;">Paperbacks</a>
+            </li>
+            <li><a (click)="scrollTo('about')" style="cursor: pointer;">About Us</a></li>
+            <li><a (click)="scrollTo('contact')" style="cursor: pointer;">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-2 col-6 mb-4 mb-md-0">
+          <h6>Connect With Me</h6>
+          <ul class="list-unstyled text-muted small">
+            <li><a href="https://www.instagram.com/tarangini.writes" target="_blank"><i
+                  class="bi bi-instagram me-2"></i> Instagram</a></li>
+            <li><a href="#"><i class="bi bi-telegram me-2"></i> Telegram</a></li>
+            <li><a href="mailto:taranginiwrites&#64;gmail.com"><i class="bi bi-envelope me-2"></i> Email</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <h6 class="mb-3">For any queries</h6>
+          <p class="text-muted small mb-4">DM on Instagram or Email me anytime.</p>
+          <div class="cursive fs-1 opacity-25">♡</div>
+        </div>
+      </div>
+      <div class="border-top border-secondary mt-5 pt-4 text-center">
+        <p class="small text-muted mb-0">© 2024 Tarangini Writes. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+</div>

@@ -9,5 +9,5 @@ export const environment = {
     appId: "1:372422584522:web:f12213d7599f6b1977ec33",
     measurementId: "G-2HDT3C1N1R"
   },
-  apiUrl: 'https://your-bookvault-backend.onrender.com/api'
+  apiUrl: 'https://bookvault-backend-948w.onrender.com/api'
 };

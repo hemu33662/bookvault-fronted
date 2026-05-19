@@ -309,7 +309,8 @@
 }
 
 .contact-method-card {
-  width: 280px;
+  width: 100%;
+  max-width: 280px;
   transition: all 0.3s ease;
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
@@ -569,5 +570,16 @@
 
   .features-box {
     padding: 2rem !important;
+  }
+
+  .hero-section-premium {
+    height: auto;
+    min-height: auto;
+    aspect-ratio: 956 / 625;
+  }
+
+  .hero-bg-image {
+    background-size: cover;
+    background-position: center;
   }
 }

@@ -20,8 +20,11 @@
           <div class="auth-logo mb-3">
             <i class="bi bi-journal-bookmark-fill fs-1"></i>
           </div>
-          <h2 class="serif display-5">Welcome Back</h2>
-          <p class="text-muted">Continue your story with us.</p>
+          <h2 class="serif display-5 d-none d-lg-block">Welcome Back</h2>
+          <p class="text-muted d-none d-lg-block">Continue your story with us.</p>
+
+          <h2 class="serif display-5 d-block d-lg-none mb-1">A New Chapter <span class="cursive text-accent">♡</span></h2>
+          <p class="text-muted d-block d-lg-none fst-italic small">“Let every page carry the breathings of your heart.”</p>
         </div>
 
         <form (ngSubmit)="onSubmit()">
@@ -41,12 +44,16 @@
             <i class="bi bi-exclamation-circle me-2"></i> {{ errorMessage }}
           </div>
 
+          <div *ngIf="successMessage" class="alert alert-success border-0 small py-2 rounded-3 mb-4">
+            <i class="bi bi-check-circle me-2"></i> {{ successMessage }}
+          </div>
+
           <div class="d-flex justify-content-between align-items-center mb-4 px-1">
             <div class="form-check">
               <input type="checkbox" class="form-check-input custom-checkbox" id="remember">
               <label class="form-check-label small text-muted" for="remember">Keep me signed in</label>
             </div>
-            <a href="#" class="small text-decoration-none text-accent fw-bold">Forgot?</a>
+            <a href="#" (click)="forgotPassword($event)" class="small text-decoration-none text-accent fw-bold">Forgot?</a>
           </div>
 
           <button type="submit" class="btn btn-auth-primary w-100 py-3 mb-4" [disabled]="isLoading">

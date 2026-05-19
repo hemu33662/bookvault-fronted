@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, sendPasswordResetEmail } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 
@@ -16,6 +16,7 @@ export class LoginComponent {
   email = 'hemanth.nitm@gmail.com';
   password = 'c7bcdc32ffd7394bc9fff1a4263d12f90f4e1ea0';
   errorMessage = '';
+  successMessage = '';
   isLoading = false;
 
   private auth: Auth = inject(Auth);
@@ -30,12 +31,13 @@ export class LoginComponent {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
     try {
       await signInWithEmailAndPassword(this.auth, this.email, this.password);
       try {
         const user: any = await this.authService.syncUserWithBackend();
-        
+
         if (user.role === 'ADMIN') {
           this.router.navigate(['/admin/dashboard']);
         } else {
@@ -51,6 +53,32 @@ export class LoginComponent {
         this.errorMessage = 'Invalid email or password.';
       } else {
         this.errorMessage = 'An error occurred during login: ' + (error.message || error.code);
+      }
+    } finally {
+      this.isLoading = false;
+    }
+  }
+  async forgotPassword(event: Event) {
+    event.preventDefault();
+    this.errorMessage = '';
+    this.successMessage = '';
+    
+    if (!this.email) {
+      this.errorMessage = 'Please enter your email address to reset your password.';
+      return;
+    }
+
+    this.isLoading = true;
+
+    try {
+      await sendPasswordResetEmail(this.auth, this.email);
+      this.successMessage = 'Password reset email sent. Please check your inbox and spam folder.';
+    } catch (error: any) {
+      console.error('Password reset error:', error);
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
+         this.errorMessage = 'Please enter a valid, registered email address.';
+      } else {
+         this.errorMessage = 'Failed to send password reset email: ' + (error.message || error.code);
       }
     } finally {
       this.isLoading = false;

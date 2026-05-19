@@ -75,7 +75,7 @@
           <div class="recent-info">
             <h5 class="serif">{{ book.title }}</h5>
             <p>by {{ book.author }}</p>
-            <button class="btn-continue" [routerLink]="['/app/reader', book.id]">Open Book</button>
+            <button class="btn-continue" [routerLink]="['/reader', book.id]">Open Book</button>
           </div>
         </div>
         } @empty {
